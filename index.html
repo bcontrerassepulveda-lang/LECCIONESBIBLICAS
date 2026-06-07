@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Biblioteca de Lecciones Evangelísticas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="top-strip">
+      <button class="top-pill active" data-type="Evangelización">🟣 Lecciones de evangelización</button>
+      <button class="top-pill" data-type="Crecimiento">🟢 Lecciones de crecimiento</button>
+      <button class="top-pill" data-type="">📖 Génesis a Apocalipsis</button>
+    </header>
+
+    <div class="library-shell">
+      <aside class="sidebar">
+        <h1>Selecciona una sección o un libro en orden bíblico</h1>
+        <div id="divisionButtons" class="division-buttons"></div>
+
+        <label class="select-block">
+          <span>Libro específico</span>
+          <select id="bookFilter"></select>
+        </label>
+
+        <section class="topic-panel">
+          <h2>🔎 Filtros de lecciones</h2>
+          <label>
+            <span>Tema</span>
+            <select id="topicFilter"></select>
+          </label>
+          <div id="topicChips" class="topic-chips"></div>
+        </section>
+      </aside>
+
+      <main class="content">
+        <section class="toolbar">
+          <nav class="resource-tabs">
+            <button class="tab-button active">Lecciones</button>
+            <button class="tab-button">Cánticos</button>
+            <button class="tab-button">Lecciones objetivas</button>
+            <button class="tab-button">Planificaciones mensuales</button>
+          </nav>
+          <label class="search-box">
+            <span>Buscar lección</span>
+            <input id="searchInput" type="search" placeholder="Buscar por historia, cita, personaje, tema..." />
+          </label>
+        </section>
+
+        <section class="type-switch">
+          <button class="type-button active" data-type="">Todas las lecciones</button>
+          <button class="type-button" data-type="Evangelización">Evangelización</button>
+          <button class="type-button" data-type="Crecimiento">Crecimiento</button>
+        </section>
+
+        <section class="hero-card">
+          <div>
+            <p class="eyebrow" id="currentScope">Toda la biblioteca</p>
+            <h2 id="scopeTitle">Toda la biblioteca</h2>
+            <p id="scopeDescription">Explora las lecciones o selecciona una sección arriba.</p>
+          </div>
+          <button id="scrollResults" type="button">Ver resultados ↓</button>
+        </section>
+
+        <section class="stats-row">
+          <div><span>Total biblioteca</span><strong id="totalCount">0</strong></div>
+          <div><span>Evangelización</span><strong id="evangelismCount">0</strong></div>
+          <div><span>Crecimiento</span><strong id="growthCount">0</strong></div>
+          <div><span>Resultados visibles</span><strong id="visibleCount">0</strong></div>
+        </section>
+
+        <section class="results-head" id="resultsAnchor">
+          <div>
+            <p class="eyebrow">Resultados</p>
+            <h2 id="resultsTitle">Lecciones disponibles</h2>
+          </div>
+          <button id="clearFilters" type="button">Limpiar filtros</button>
+        </section>
+
+        <section id="lessonGrid" class="lesson-grid" aria-label="Resultados de lecciones"></section>
+      </main>
+    </div>
+
+    <dialog id="lessonDialog" class="lesson-dialog">
+      <article class="dialog-card">
+        <header class="dialog-header">
+          <div>
+            <p class="eyebrow" id="dialogMeta">Lección</p>
+            <h2 id="dialogTitle">Título</h2>
+          </div>
+          <button id="closeDialog" type="button">Cerrar</button>
+        </header>
+
+        <section class="dialog-facts">
+          <div><span>Libro</span><strong id="dialogBook">-</strong></div>
+          <div><span>Porción</span><strong id="dialogPortion">-</strong></div>
+          <div><span>Versículo</span><strong id="dialogVerse">-</strong></div>
+        </section>
+
+        <section class="diagram-section">
+          <div class="section-title">
+            <h3>Diagrama final narrado</h3>
+            <div class="section-actions">
+              <a id="downloadLesson" class="download-button" href="#" download>Descargar bosquejo</a>
+              <button id="copyDiagram" type="button">Copiar diagrama</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="story-table">
+              <thead>
+                <tr>
+                  <th>Historia / eventos narrada</th>
+                  <th>Frase puente</th>
+                  <th>Plan de salvación aplicado</th>
+                </tr>
+              </thead>
+              <tbody id="diagramBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="full-section">
+          <div class="section-title">
+            <h3>Todas las lecturas e información</h3>
+            <button id="copyFullLesson" type="button">Copiar lección</button>
+          </div>
+          <div id="lessonInfo" class="lesson-info"></div>
+        </section>
+      </article>
+    </dialog>
+
+    <div class="toast" id="toast">Copiado</div>
+    <script src="./app.js"></script>
+  </body>
+</html>
