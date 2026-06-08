@@ -10,6 +10,14 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <div id="loadingOverlay" class="loading-overlay">
+      <div class="loading-card">
+        <span class="loader-mark">📖</span>
+        <strong>Cargando biblioteca</strong>
+        <small>Preparando el recorrido bíblico...</small>
+      </div>
+    </div>
+
     <header class="top-strip">
       <button class="top-pill active" data-type="Evangelización">🟣 Lecciones de evangelización</button>
       <button class="top-pill" data-type="Crecimiento">🟢 Lecciones de crecimiento</button>
@@ -37,6 +45,30 @@
       </aside>
 
       <main class="content">
+        <section class="visual-hero">
+          <div class="hero-copy">
+            <p class="eyebrow">Biblioteca bíblica interactiva</p>
+            <h2>Recorre, prepara y presenta cada lección con claridad.</h2>
+            <p>Explora la historia bíblica completa, guarda tus favoritas y abre cada recurso en modo narrativo o presentación.</p>
+          </div>
+          <div class="hero-orbit" aria-hidden="true">
+            <span>✦</span>
+            <span>✧</span>
+            <span>✦</span>
+          </div>
+        </section>
+
+        <section class="bible-map" aria-label="Mapa bíblico interactivo">
+          <div class="map-head">
+            <div>
+              <p class="eyebrow">Mapa bíblico</p>
+              <h2>De Génesis a Apocalipsis</h2>
+            </div>
+            <button id="favoritesOnly" class="map-action" type="button">☆ Favoritas</button>
+          </div>
+          <div id="journeyMap" class="journey-map"></div>
+        </section>
+
         <section class="toolbar">
           <nav class="resource-tabs">
             <button class="tab-button active">Lecciones</button>
@@ -44,9 +76,10 @@
             <button class="tab-button">Lecciones objetivas</button>
             <button class="tab-button">Planificaciones mensuales</button>
           </nav>
-          <label class="search-box">
+          <label class="search-box search-feature">
             <span>Buscar lección</span>
             <input id="searchInput" type="search" placeholder="Buscar por historia, cita, personaje, tema..." />
+            <div id="searchSuggestions" class="search-suggestions" aria-label="Sugerencias de búsqueda"></div>
           </label>
         </section>
 
@@ -91,8 +124,18 @@
             <p class="eyebrow" id="dialogMeta">Lección</p>
             <h2 id="dialogTitle">Título</h2>
           </div>
-          <button id="closeDialog" type="button">Cerrar</button>
+          <div class="dialog-actions">
+            <button id="favoriteDialog" type="button">☆ Guardar</button>
+            <button id="presentationMode" type="button">Presentar</button>
+            <button id="closeDialog" type="button">Cerrar</button>
+          </div>
         </header>
+
+        <nav class="lesson-nav" aria-label="Navegación de la lección">
+          <button type="button" data-panel="diagram" class="active">Diagrama</button>
+          <button type="button" data-panel="story">Modo historia</button>
+          <button type="button" data-panel="full">Lecturas</button>
+        </nav>
 
         <section class="dialog-facts">
           <div><span>Libro</span><strong id="dialogBook">-</strong></div>
@@ -100,7 +143,20 @@
           <div><span>Versículo</span><strong id="dialogVerse">-</strong></div>
         </section>
 
-        <section class="diagram-section">
+        <section class="story-mode" data-panel-content="story">
+          <div class="story-stage">
+            <p class="eyebrow" id="storyStepMeta">Paso 1</p>
+            <h3 id="storyStepLabel">Historia</h3>
+            <div id="storyStepContent" class="story-step-content"></div>
+            <div class="story-progress"><span id="storyProgressBar"></span></div>
+            <div class="story-controls">
+              <button id="storyPrev" type="button">Anterior</button>
+              <button id="storyNext" type="button">Siguiente</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="diagram-section" data-panel-content="diagram">
           <div class="section-title">
             <h3>Diagrama final narrado</h3>
             <div class="section-actions">
@@ -122,7 +178,7 @@
           </div>
         </section>
 
-        <section class="full-section">
+        <section class="full-section" data-panel-content="full">
           <div class="section-title">
             <h3>Todas las lecturas e información</h3>
             <button id="copyFullLesson" type="button">Copiar lección</button>
