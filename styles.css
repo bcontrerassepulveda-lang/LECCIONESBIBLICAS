@@ -338,7 +338,15 @@ h2, h3 { margin: 0; font-family: "Baloo 2", "Nunito", sans-serif; line-height: 1
   padding: 18px 20px;
   border-bottom: 1px solid var(--line);
 }
+.dialog-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: #fffdf8;
+  box-shadow: 0 8px 18px rgba(18,24,39,.08);
+}
 .dialog-header h2 { font-size: 2rem; }
+.dialog-header button { flex: 0 0 auto; }
 .dialog-header button, .section-title button { color: #fff; background: var(--green); }
 .section-actions { display:flex; flex-wrap:wrap; gap:10px; justify-content:flex-end; }
 .download-button {
