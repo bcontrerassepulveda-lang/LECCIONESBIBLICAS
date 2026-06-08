@@ -418,7 +418,7 @@ input:focus, select:focus {
   font-size: 5rem;
   transform: rotate(-9deg);
 }
-.card-pills, .mini-tags, .card-actions, .resource-card h3, .resource-card p { position: relative; z-index: 1; }
+.card-pills, .mini-tags, .card-actions, .resource-card h3, .resource-card p, .card-preview { position: relative; z-index: 1; }
 .card-pills { display: flex; flex-wrap: wrap; gap: 6px; margin: 26px 42px 10px 0; }
 .pill, .mini-tags span {
   display: inline-flex;
@@ -444,6 +444,62 @@ input:focus, select:focus {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 4;
 }
+.card-preview {
+  display: grid;
+  gap: 7px;
+  max-height: 0;
+  margin: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: max-height .24s ease, opacity .2s ease, transform .2s ease, margin .2s ease;
+}
+.card-preview strong {
+  color: var(--green-dark);
+  font-size: .78rem;
+  text-transform: uppercase;
+}
+.card-preview span {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 8px;
+  align-items: center;
+  min-height: 34px;
+  padding: 6px 8px;
+  border: 1px solid rgba(38,122,82,.18);
+  border-radius: 8px;
+  background: rgba(255,255,255,.84);
+  transform: translateX(-10px);
+  opacity: 0;
+}
+.card-preview b {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  color: #fff;
+  font-size: .72rem;
+  background: linear-gradient(135deg, var(--green), var(--teal));
+}
+.card-preview em {
+  color: #28344a;
+  font-style: normal;
+  font-size: .78rem;
+  font-weight: 950;
+}
+.resource-card:hover .card-preview,
+.resource-card:focus-within .card-preview {
+  max-height: 170px;
+  margin: 0 0 12px;
+  opacity: 1;
+  transform: translateY(0);
+}
+.resource-card:hover .card-preview span,
+.resource-card:focus-within .card-preview span {
+  animation: previewStep .28s ease both;
+  animation-delay: var(--step-delay);
+}
 .mini-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: auto 0 12px; }
 .mini-tags span { color: #46566b; background: #f0f5f4; border: 1px solid #d5dfdd; }
 .card-actions { display: grid; grid-template-columns: 1fr; gap: 8px; }
@@ -468,14 +524,19 @@ input:focus, select:focus {
   border-radius: 8px;
   background: transparent;
 }
-.lesson-dialog::backdrop { background: rgba(18,24,39,.58); backdrop-filter: blur(7px); }
+.lesson-dialog::backdrop {
+  background: rgba(18,24,39,.58);
+  backdrop-filter: blur(7px);
+}
 .dialog-card {
   max-height: calc(100vh - 28px);
   overflow: auto;
   border-radius: 8px;
   background: #fffdf8;
   box-shadow: 0 30px 90px rgba(0,0,0,.3);
+  transform-origin: 50% 18px;
 }
+.lesson-dialog[open] .dialog-card { animation: bookOpen .34s cubic-bezier(.2,.8,.2,1) both; }
 .dialog-header {
   position: sticky;
   top: 0;
@@ -681,6 +742,24 @@ input:focus, select:focus {
 @keyframes cardIn {
   from { opacity: 0; transform: translateY(14px) scale(.98); }
   to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes previewStep {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes bookOpen {
+  0% {
+    opacity: 0;
+    transform: perspective(1200px) rotateX(8deg) scale(.92) translateY(28px);
+  }
+  60% {
+    opacity: 1;
+    transform: perspective(1200px) rotateX(-1.5deg) scale(1.01) translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(1200px) rotateX(0) scale(1) translateY(0);
+  }
 }
 @keyframes panelIn {
   from { opacity: 0; transform: translateY(8px); }

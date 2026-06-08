@@ -304,6 +304,10 @@ function renderCards() {
       </div>
       <h3>${lesson.code}. ${escapeHtml(lesson.title)}</h3>
       <p><strong>Enfoque:</strong> ${escapeHtml(lesson.need || lesson.objective || "Lección bíblica evangelística.")}</p>
+      <div class="card-preview" aria-hidden="true">
+        <strong>Vista rápida</strong>
+        ${renderCardPreview(lesson)}
+      </div>
       <div class="mini-tags">${chips}</div>
       <div class="card-actions">
         <button class="open-button" type="button">Ver recurso</button>
@@ -316,6 +320,15 @@ function renderCards() {
   });
   els.grid.innerHTML = "";
   els.grid.appendChild(fragment);
+}
+
+function renderCardPreview(lesson) {
+  return (lesson.diagram || []).slice(0, 3).map((row, index) => `
+    <span style="--step-delay:${index * 70}ms">
+      <b>${index + 1}</b>
+      <em>${escapeHtml(row.label || "Historia")}</em>
+    </span>
+  `).join("");
 }
 
 function divisionIcon(name) {
