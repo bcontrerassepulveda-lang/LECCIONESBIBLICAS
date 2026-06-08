@@ -63,7 +63,6 @@ const KW_TOPICS = {
 const els = {
   loading: document.querySelector("#loadingOverlay"),
   search: document.querySelector("#searchInput"),
-  suggestions: document.querySelector("#searchSuggestions"),
   book: document.querySelector("#bookFilter"),
   topic: document.querySelector("#topicFilter"),
   divisionButtons: document.querySelector("#divisionButtons"),
@@ -170,16 +169,8 @@ function toggleFavorite(lesson) {
 }
 
 function animateNumber(element, target) {
-  const duration = 650;
-  const startTime = performance.now();
-  const from = Number((element.textContent || "0").replace(/\D/g, "")) || 0;
-  const step = (now) => {
-    const progress = Math.min((now - startTime) / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3);
-    element.textContent = Math.round(from + (target - from) * eased).toLocaleString("es-CL");
-    if (progress < 1) requestAnimationFrame(step);
-  };
-  requestAnimationFrame(step);
+  if (!element) return;
+  element.textContent = target.toLocaleString("es-CL");
 }
 
 function renderDivisionButtons() {
@@ -276,33 +267,8 @@ function applyFilters({ resetBook = false } = {}) {
   renderDivisionButtons();
   renderJourneyMap();
   renderTopicChips([...new Set(state.lessons.flatMap((lesson) => lesson.topicsList || []))]);
-  renderSearchSuggestions();
   renderScope();
   renderCards();
-}
-
-function renderSearchSuggestions() {
-  if (!els.suggestions) return;
-  const query = normalize(els.search.value);
-  const seeds = query
-    ? state.lessons.filter((lesson) => normalize(`${lesson.code} ${lesson.title} ${lesson.book}`).includes(query)).slice(0, 5)
-    : state.lessons.filter((lesson) => ["001", "150", "291", "358", "395"].includes(lesson.code));
-
-  els.suggestions.innerHTML = seeds.map((lesson) => `
-    <button type="button" data-code="${escapeHtml(lesson.code)}">
-      <span>${escapeHtml(lesson.code)}</span>${escapeHtml(lesson.title)}
-    </button>
-  `).join("");
-
-  els.suggestions.querySelectorAll("button").forEach((button) => {
-    button.addEventListener("click", () => {
-      const lesson = state.lessons.find((item) => item.code === button.dataset.code);
-      if (!lesson) return;
-      els.search.value = lesson.title;
-      applyFilters();
-      openLesson(lesson);
-    });
-  });
 }
 
 function renderScope() {
