@@ -1,0 +1,62 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Ver lección</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root{--bg:#fff;--fg:#111;--muted:#666;--accent:#0b63d6}
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:var(--bg);color:var(--fg);margin:0;padding:24px;}
+  .wrap{max-width:900px;margin:0 auto}
+  header{display:flex;gap:12px;align-items:center;margin-bottom:18px}
+  h1{font-size:1.4rem;margin:0}
+  .meta{color:var(--muted);font-size:.95rem}
+  pre{white-space:pre-wrap;word-wrap:break-word;background:#f8f9fb;padding:18px;border-radius:8px;border:1px solid #eee}
+  a{color:var(--accent)}
+  .actions{margin-left:auto}
+  .small{font-size:.9rem;color:var(--muted)}
+</style>
+<div class="wrap">
+  <header>
+    <div>
+      <h1 id="title">Lección</h1>
+      <div class="meta small" id="path"></div>
+    </div>
+    <div class="actions">
+      <a id="raw" href="#" target="_blank">Abrir raw</a>
+    </div>
+  </header>
+  <main>
+    <pre id="content">Cargando...</pre>
+  </main>
+</div>
+
+<script>
+function qs(name){
+  const params = new URLSearchParams(location.search);
+  return params.get(name);
+}
+
+async function fetchText(path){
+  try{ const r = await fetch(path, {cache:'no-store'}); if(!r.ok) throw new Error('404'); return await r.text() }catch(e){return null}
+}
+
+async function run(){
+  const f = qs('f');
+  const contentEl = document.getElementById('content');
+  const titleEl = document.getElementById('title');
+  const pathEl = document.getElementById('path');
+  const raw = document.getElementById('raw');
+  if(!f){ contentEl.textContent = 'No se especificó archivo.'; return }
+  const decoded = decodeURIComponent(f);
+  pathEl.textContent = decoded;
+  raw.href = decoded;
+  const txt = await fetchText(decoded);
+  if(txt===null){ contentEl.textContent = 'No se encontró el archivo.'; return }
+  // small formatting: split paragraphs by double newlines
+  contentEl.textContent = txt;
+  // set title from first line if present
+  const firstLine = txt.split(/\r?\n/)[0]||'';
+  if(firstLine.trim()) titleEl.textContent = firstLine.trim();
+}
+
+run();
+</script>
