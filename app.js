@@ -305,7 +305,7 @@ function renderCards() {
       <h3>${lesson.code}. ${escapeHtml(lesson.title)}</h3>
       <p><strong>Enfoque:</strong> ${escapeHtml(lesson.need || lesson.objective || "Lección bíblica evangelística.")}</p>
       <div class="card-preview" aria-hidden="true">
-        <strong>Vista rápida</strong>
+        <strong>Consejo para el niño salvo</strong>
         ${renderCardPreview(lesson)}
       </div>
       <div class="mini-tags">${chips}</div>
@@ -323,12 +323,45 @@ function renderCards() {
 }
 
 function renderCardPreview(lesson) {
-  return (lesson.diagram || []).slice(0, 3).map((row, index) => `
-    <span style="--step-delay:${index * 70}ms">
-      <b>${index + 1}</b>
-      <em>${escapeHtml(row.label || "Historia")}</em>
+  const advice = getSavedChildAdvice(lesson);
+  if (advice) {
+    return `
+      <span class="advice-preview" style="--step-delay:0ms">
+        <b>✓</b>
+        <em>${escapeHtml(advice)}</em>
+      </span>
+    `;
+  }
+
+  return `
+    <span class="advice-preview" style="--step-delay:0ms">
+      <b>→</b>
+      <em>${escapeHtml(lesson.objective || lesson.need || "Abre la lección para revisar el consejo y la aplicación.")}</em>
     </span>
-  `).join("");
+  `;
+}
+
+function getSavedChildAdvice(lesson) {
+  const section = (lesson.sections || []).find((item) => {
+    const title = normalize(item.title);
+    return title.includes("reflexion") && title.includes("salvo");
+  });
+  if (!section?.content) return "";
+
+  const normalizedContent = section.content.replace(/\r/g, "").trim();
+  const adviceMatch = normalizedContent.match(/Consejo:\s*([\s\S]*?)(?:\n\s*Ejemplos:|\n\s*\d+\.|\n\n[A-ZÁÉÍÓÚÑ][^\n]{0,60}:|$)/i);
+  const rawAdvice = adviceMatch?.[1] || normalizedContent.replace(/^Si tú ya recibiste a Jesús\.\.\.\s*/i, "");
+  return compactPreviewText(rawAdvice, 190);
+}
+
+function compactPreviewText(value, limit) {
+  const text = (value || "")
+    .replace(/\*\*/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (text.length <= limit) return text;
+  const clipped = text.slice(0, limit);
+  return `${clipped.slice(0, clipped.lastIndexOf(" ") || limit)}...`;
 }
 
 function divisionIcon(name) {
