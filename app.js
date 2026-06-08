@@ -1,8 +1,11 @@
 const FAVORITES_KEY = "lecciones-biblicas-favoritas";
+const PAGE_SIZE = 20;
 
 const state = {
   lessons: [],
   filtered: [],
+  displayLimit: PAGE_SIZE,
+  viewMode: "cards",
   selected: null,
   division: "",
   type: "",
@@ -80,6 +83,11 @@ const els = {
   scopeDescription: document.querySelector("#scopeDescription"),
   resultsTitle: document.querySelector("#resultsTitle"),
   scrollResults: document.querySelector("#scrollResults"),
+  cardView: document.querySelector("#cardView"),
+  listView: document.querySelector("#listView"),
+  loadMoreBar: document.querySelector("#loadMoreBar"),
+  loadMoreText: document.querySelector("#loadMoreText"),
+  loadMoreLessons: document.querySelector("#loadMoreLessons"),
   dialog: document.querySelector("#lessonDialog"),
   dialogMeta: document.querySelector("#dialogMeta"),
   dialogTitle: document.querySelector("#dialogTitle"),
@@ -164,8 +172,11 @@ function toggleFavorite(lesson) {
   saveFavorites();
   updateFavoriteControls();
   renderJourneyMap();
-  renderCards();
-  if (state.favoritesOnly) applyFilters();
+  if (state.favoritesOnly) {
+    applyFilters({ resetLimit: false });
+  } else {
+    renderCards();
+  }
 }
 
 function animateNumber(element, target) {
@@ -259,11 +270,12 @@ function matchesFilters(lesson) {
   );
 }
 
-function applyFilters({ resetBook = false } = {}) {
+function applyFilters({ resetBook = false, resetLimit = true } = {}) {
   if (resetBook) els.book.value = "";
+  if (resetLimit) state.displayLimit = PAGE_SIZE;
   state.topic = els.topic.value;
   state.filtered = state.lessons.filter(matchesFilters);
-  animateNumber(els.visible, state.filtered.length);
+  animateNumber(els.visible, Math.min(state.displayLimit, state.filtered.length));
   renderDivisionButtons();
   renderJourneyMap();
   renderTopicChips([...new Set(state.lessons.flatMap((lesson) => lesson.topicsList || []))]);
@@ -289,7 +301,16 @@ function renderScope() {
 
 function renderCards() {
   const fragment = document.createDocumentFragment();
-  state.filtered.forEach((lesson, index) => {
+  const visibleLessons = state.filtered.slice(0, state.displayLimit);
+  els.grid.className = `lesson-grid ${state.viewMode === "list" ? "list-view" : "card-view"}`;
+
+  if (!visibleLessons.length) {
+    els.grid.innerHTML = `<div class="empty-state">No hay lecciones para esta selección.</div>`;
+    renderLoadMore();
+    return;
+  }
+
+  visibleLessons.forEach((lesson, index) => {
     const card = document.createElement("article");
     card.className = `resource-card ${isFavorite(lesson) ? "is-favorite" : ""}`;
     card.style.setProperty("--delay", `${Math.min(index, 24) * 28}ms`);
@@ -333,6 +354,24 @@ function renderCards() {
   });
   els.grid.innerHTML = "";
   els.grid.appendChild(fragment);
+  renderLoadMore();
+}
+
+function renderLoadMore() {
+  if (!els.loadMoreBar || !els.loadMoreText || !els.loadMoreLessons) return;
+  const shown = Math.min(state.displayLimit, state.filtered.length);
+  const hasMore = shown < state.filtered.length;
+  els.loadMoreBar.hidden = !state.filtered.length;
+  els.loadMoreText.textContent = `Mostrando ${shown.toLocaleString("es-CL")} de ${state.filtered.length.toLocaleString("es-CL")}`;
+  els.loadMoreLessons.hidden = !hasMore;
+  els.loadMoreLessons.textContent = hasMore ? "Mostrar más lecciones" : "Ya se muestran todas";
+}
+
+function setViewMode(mode) {
+  state.viewMode = mode === "list" ? "list" : "cards";
+  els.cardView?.classList.toggle("active", state.viewMode === "cards");
+  els.listView?.classList.toggle("active", state.viewMode === "list");
+  renderCards();
 }
 
 function renderCardPreview(lesson) {
@@ -364,7 +403,7 @@ function getSavedChildAdvice(lesson) {
   const normalizedContent = section.content.replace(/\r/g, "").trim();
   const adviceMatch = normalizedContent.match(/Consejo:\s*([\s\S]*?)(?:\n\s*Ejemplos:|\n\s*\d+\.|\n\n[A-ZÁÉÍÓÚÑ][^\n]{0,60}:|$)/i);
   const rawAdvice = adviceMatch?.[1] || normalizedContent.replace(/^Si tú ya recibiste a Jesús\.\.\.\s*/i, "");
-  return compactPreviewText(rawAdvice, 190);
+  return compactPreviewText(rawAdvice, 280);
 }
 
 function compactPreviewText(value, limit) {
@@ -561,6 +600,12 @@ async function init() {
   els.topic.addEventListener("input", () => applyFilters());
   els.clear.addEventListener("click", clearFilters);
   els.scrollResults.addEventListener("click", () => document.querySelector("#resultsAnchor").scrollIntoView({ behavior: "smooth" }));
+  els.loadMoreLessons?.addEventListener("click", () => {
+    state.displayLimit += PAGE_SIZE;
+    animateNumber(els.visible, Math.min(state.displayLimit, state.filtered.length));
+    renderCards();
+  });
+  document.querySelectorAll("[data-view]").forEach((button) => button.addEventListener("click", () => setViewMode(button.dataset.view)));
   els.favoritesOnly?.addEventListener("click", () => {
     state.favoritesOnly = !state.favoritesOnly;
     applyFilters();

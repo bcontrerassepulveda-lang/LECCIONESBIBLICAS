@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="./styles.css?v=20260608-5" />
+    <link rel="stylesheet" href="./styles.css?v=20260608-6" />
   </head>
   <body>
     <div id="loadingOverlay" class="loading-overlay">
@@ -109,10 +109,20 @@
             <p class="eyebrow">Resultados</p>
             <h2 id="resultsTitle">Lecciones disponibles</h2>
           </div>
-          <button id="clearFilters" type="button">Limpiar filtros</button>
+          <div class="results-tools" aria-label="Controles de resultados">
+            <div class="view-toggle" role="group" aria-label="Cambiar vista">
+              <button id="cardView" class="active" type="button" data-view="cards">Tarjetas</button>
+              <button id="listView" type="button" data-view="list">Lista</button>
+            </div>
+            <button id="clearFilters" type="button">Limpiar filtros</button>
+          </div>
         </section>
 
         <section id="lessonGrid" class="lesson-grid" aria-label="Resultados de lecciones"></section>
+        <section id="loadMoreBar" class="load-more-bar" hidden>
+          <span id="loadMoreText">Mostrando 20 de 0</span>
+          <button id="loadMoreLessons" type="button">Mostrar más lecciones</button>
+        </section>
       </main>
     </div>
 
@@ -188,6 +198,6 @@
     </dialog>
 
     <div class="toast" id="toast">Copiado</div>
-    <script src="./app.js?v=20260608-5"></script>
+    <script src="./app.js?v=20260608-6"></script>
   </body>
 </html>
