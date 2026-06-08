@@ -295,27 +295,40 @@ function renderCards() {
     card.style.setProperty("--delay", `${Math.min(index, 24) * 28}ms`);
     const chips = (lesson.topicsList || []).slice(0, 4).map((topic) => `<span>${escapeHtml(topic)}</span>`).join("");
     card.innerHTML = `
-      <button class="favorite-button" type="button" aria-label="Guardar favorita">${isFavorite(lesson) ? "★" : "☆"}</button>
-      <div class="card-illustration" aria-hidden="true">${divisionIcon(lesson.division)}</div>
-      <div class="card-pills">
-        <span class="pill green">${escapeHtml(lesson.type || "Evangelización")}</span>
-        <span class="pill blue">${escapeHtml(lesson.book || "Libro")}</span>
-        <span class="pill amber">${escapeHtml(lesson.portion || "Porción")}</span>
-      </div>
-      <h3>${lesson.code}. ${escapeHtml(lesson.title)}</h3>
-      <p><strong>Enfoque:</strong> ${escapeHtml(lesson.need || lesson.objective || "Lección bíblica evangelística.")}</p>
-      <div class="card-preview" aria-hidden="true">
-        <strong>Consejo para el niño salvo</strong>
-        ${renderCardPreview(lesson)}
-      </div>
-      <div class="mini-tags">${chips}</div>
-      <div class="card-actions">
-        <button class="open-button" type="button">Ver recurso</button>
-        <a class="download-card" href="${escapeHtml(lesson.downloadUrl || "#")}" download>Descargar bosquejo</a>
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="favorite-button" type="button" aria-label="Guardar favorita">${isFavorite(lesson) ? "★" : "☆"}</button>
+          <div class="card-illustration" aria-hidden="true">${divisionIcon(lesson.division)}</div>
+          <div class="card-pills">
+            <span class="pill green">${escapeHtml(lesson.type || "Evangelización")}</span>
+            <span class="pill blue">${escapeHtml(lesson.book || "Libro")}</span>
+            <span class="pill amber">${escapeHtml(lesson.portion || "Porción")}</span>
+          </div>
+          <h3>${lesson.code}. ${escapeHtml(lesson.title)}</h3>
+          <p><strong>Enfoque:</strong> ${escapeHtml(lesson.need || lesson.objective || "Lección bíblica evangelística.")}</p>
+          <div class="mini-tags">${chips}</div>
+          <div class="card-actions">
+            <button class="open-button" type="button">Ver recurso</button>
+            <a class="download-card" href="${escapeHtml(lesson.downloadUrl || "#")}" download>Descargar bosquejo</a>
+          </div>
+        </div>
+        <div class="card-face card-back">
+          <button class="favorite-button" type="button" aria-label="Guardar favorita">${isFavorite(lesson) ? "★" : "☆"}</button>
+          <div class="back-glow" aria-hidden="true">${divisionIcon(lesson.division)}</div>
+          <p class="back-kicker">Consejo para el niño salvo</p>
+          <h3>${lesson.code}. ${escapeHtml(lesson.title)}</h3>
+          <div class="card-preview">
+            ${renderCardPreview(lesson)}
+          </div>
+          <div class="card-actions">
+            <button class="open-button" type="button">Abrir lección</button>
+            <a class="download-card" href="${escapeHtml(lesson.downloadUrl || "#")}" download>Descargar bosquejo</a>
+          </div>
+        </div>
       </div>
     `;
-    card.querySelector(".open-button").addEventListener("click", () => openLesson(lesson));
-    card.querySelector(".favorite-button").addEventListener("click", () => toggleFavorite(lesson));
+    card.querySelectorAll(".open-button").forEach((button) => button.addEventListener("click", () => openLesson(lesson)));
+    card.querySelectorAll(".favorite-button").forEach((button) => button.addEventListener("click", () => toggleFavorite(lesson)));
     fragment.appendChild(card);
   });
   els.grid.innerHTML = "";
