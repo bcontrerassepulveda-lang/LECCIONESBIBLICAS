@@ -24,8 +24,8 @@ body {
   color: var(--ink);
   font-family: "Nunito", system-ui, sans-serif;
   background:
-    linear-gradient(180deg, rgba(255,250,240,.72), rgba(241,246,241,.9)),
-    url("./assets/biblical-journey-banner.png") top center / min(1600px, 145vw) auto no-repeat,
+    linear-gradient(180deg, rgba(255,250,240,.38), rgba(241,246,241,.72)),
+    url("./assets/biblical-journey-banner.png") top center / min(1760px, 152vw) auto no-repeat fixed,
     linear-gradient(135deg, #f8e6a8 0%, #cfeee6 45%, #f7d5c9 100%);
 }
 
@@ -196,19 +196,20 @@ input:focus, select:focus {
 .topic-chip:disabled { opacity: .45; cursor: not-allowed; }
 
 .content {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 16px;
   min-width: 0;
 }
 
 .visual-hero {
   position: relative;
-  min-height: 250px;
+  min-height: 310px;
   overflow: hidden;
   padding: clamp(24px, 4vw, 46px);
   color: #fff;
   background:
-    linear-gradient(90deg, rgba(18,24,39,.88), rgba(18,24,39,.38)),
+    linear-gradient(90deg, rgba(18,24,39,.72), rgba(18,24,39,.18)),
     url("./assets/biblical-journey-banner.png") center / cover no-repeat;
 }
 .visual-hero::after {
@@ -374,12 +375,16 @@ input:focus, select:focus {
 }
 .stats-row span { display: block; color: var(--muted); font-size: .78rem; font-weight: 900; text-transform: uppercase; }
 .stats-row strong { display: block; margin-top: 4px; color: var(--green); font-size: 1.8rem; line-height: 1; }
-.results-head { padding: 16px 18px; }
+.results-head {
+  padding: 16px 18px;
+  border-left: 6px solid var(--green);
+}
 
 .lesson-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(220px, 1fr));
   gap: 14px;
+  padding-bottom: 42px;
 }
 .resource-card {
   position: relative;

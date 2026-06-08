@@ -199,6 +199,7 @@ function renderDivisionButtons() {
 }
 
 function renderJourneyMap() {
+  if (!els.journeyMap) return;
   els.journeyMap.innerHTML = "";
   divisions.slice(1).forEach((division, index) => {
     const count = state.lessons.filter((lesson) => lesson.division === division.name).length;
@@ -281,6 +282,7 @@ function applyFilters({ resetBook = false } = {}) {
 }
 
 function renderSearchSuggestions() {
+  if (!els.suggestions) return;
   const query = normalize(els.search.value);
   const seeds = query
     ? state.lessons.filter((lesson) => normalize(`${lesson.code} ${lesson.title} ${lesson.book}`).includes(query)).slice(0, 5)
@@ -313,8 +315,10 @@ function renderScope() {
   els.scopeTitle.textContent = title || "Toda la biblioteca";
   els.scopeDescription.textContent = `${state.filtered.length.toLocaleString("es-CL")} lecciones relacionadas con la selección actual.`;
   els.resultsTitle.textContent = state.filtered.length ? "Lecciones encontradas" : "Sin resultados";
-  els.favoritesOnly.classList.toggle("active", state.favoritesOnly);
-  els.favoritesOnly.textContent = state.favoritesOnly ? `★ Favoritas (${state.favorites.size})` : `☆ Favoritas (${state.favorites.size})`;
+  if (els.favoritesOnly) {
+    els.favoritesOnly.classList.toggle("active", state.favoritesOnly);
+    els.favoritesOnly.textContent = state.favoritesOnly ? `★ Favoritas (${state.favorites.size})` : `☆ Favoritas (${state.favorites.size})`;
+  }
 }
 
 function renderCards() {
@@ -358,7 +362,7 @@ function openLesson(lesson) {
   state.activePanel = "diagram";
   state.presentation = false;
   els.dialog.classList.remove("presentation");
-  els.presentationMode.textContent = "Presentar";
+  if (els.presentationMode) els.presentationMode.textContent = "Presentar";
   els.dialogMeta.textContent = `${lesson.code} · ${lesson.division}`;
   els.dialogTitle.textContent = lesson.title;
   els.dialogBook.textContent = lesson.book || "-";
@@ -377,7 +381,7 @@ function openLesson(lesson) {
 window.openLesson = openLesson;
 
 function updateFavoriteControls() {
-  if (!state.selected) return;
+  if (!state.selected || !els.favoriteDialog) return;
   els.favoriteDialog.textContent = isFavorite(state.selected) ? "★ Guardada" : "☆ Guardar";
 }
 
@@ -410,7 +414,7 @@ function renderDiagram(lesson) {
 }
 
 function renderStoryStep() {
-  if (!state.selected) return;
+  if (!state.selected || !els.storyMeta || !els.storyLabel || !els.storyContent || !els.storyProgress || !els.storyPrev || !els.storyNext) return;
   const steps = state.selected.diagram || [];
   const step = steps[state.storyIndex] || steps[0];
   if (!step) return;
@@ -532,31 +536,31 @@ async function init() {
   els.topic.addEventListener("input", () => applyFilters());
   els.clear.addEventListener("click", clearFilters);
   els.scrollResults.addEventListener("click", () => document.querySelector("#resultsAnchor").scrollIntoView({ behavior: "smooth" }));
-  els.favoritesOnly.addEventListener("click", () => {
+  els.favoritesOnly?.addEventListener("click", () => {
     state.favoritesOnly = !state.favoritesOnly;
     applyFilters();
   });
   els.closeDialog.addEventListener("click", () => els.dialog.close());
-  els.favoriteDialog.addEventListener("click", () => state.selected && toggleFavorite(state.selected));
-  els.presentationMode.addEventListener("click", () => {
+  els.favoriteDialog?.addEventListener("click", () => state.selected && toggleFavorite(state.selected));
+  els.presentationMode?.addEventListener("click", () => {
     state.presentation = !state.presentation;
     els.dialog.classList.toggle("presentation", state.presentation);
     els.presentationMode.textContent = state.presentation ? "Salir" : "Presentar";
     setPanel(state.presentation ? "story" : state.activePanel);
   });
-  els.storyPrev.addEventListener("click", () => moveStory(-1));
-  els.storyNext.addEventListener("click", () => moveStory(1));
+  els.storyPrev?.addEventListener("click", () => moveStory(-1));
+  els.storyNext?.addEventListener("click", () => moveStory(1));
   els.copyDiagram.addEventListener("click", copyDiagram);
   els.copyFull.addEventListener("click", copyFullLesson);
   document.querySelectorAll("[data-panel]").forEach((button) => button.addEventListener("click", () => setPanel(button.dataset.panel)));
   document.querySelectorAll("[data-type]").forEach((button) => button.addEventListener("click", () => setType(button.dataset.type)));
 
   applyFilters();
-  window.setTimeout(() => els.loading.classList.add("hidden"), 450);
+  window.setTimeout(() => els.loading?.classList.add("hidden"), 450);
 }
 
 init().catch((error) => {
   console.error(error);
-  els.loading.classList.add("hidden");
+  els.loading?.classList.add("hidden");
   els.grid.innerHTML = `<div class="empty-state">No pude cargar las lecciones.</div>`;
 });
