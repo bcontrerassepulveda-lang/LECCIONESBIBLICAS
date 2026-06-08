@@ -50,9 +50,10 @@ foreach($d in $subdirs){
 
 # Combinar y ordenar por Number (si Number==0, ordenar por title)
 $all = @()
+# Priorizar entradas en subcarpetas y en la raíz, y solo luego las de outputs
+$all += $dirFiles
 $all += $rootFiles
 $all += $outputFiles
-$all += $dirFiles
 # Ordenar y eliminar duplicados. Prioriza archivos de la raíz sobre outputs cuando coinciden
 $all = $all | Sort-Object @{Expression={$_.Number};Descending=$false}, @{Expression={$_.Title};Descending=$false}
 $seen = @{}
